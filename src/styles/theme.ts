@@ -22,7 +22,7 @@ export const theme = {
 
     /** Feedback */
     success: {
-      light: '##BFF7BE',
+      light: '#BFF7BE',
       main: '#4BB84A',
       dark: '#30752F',
     },
@@ -47,8 +47,8 @@ export const theme = {
   /** Tipografia */
   fonts: {
     family: {
-      regular: 'Lato-Regular',
-      bold: 'Lato-Bold',
+      regular: 'Lato_400Regular',
+      bold: 'Lato_700Bold',
     },
 
     sizes: {

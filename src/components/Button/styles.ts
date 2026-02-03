@@ -3,11 +3,17 @@ import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
     container: {
-        borderRadius: 30,
-        padding: 12
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "center",
+        gap: 6,
+        borderRadius: 25,
+        paddingVertical: 12,
+        paddingHorizontal: 12,
+       
     },
     text: {
-        
+        fontFamily: theme.fonts.family.bold,
     },
     primary: {
         backgroundColor: theme.colors.primary[600]
