@@ -3,16 +3,16 @@ import { StyleSheet, Text, View } from 'react-native'
 
 export const styles = StyleSheet.create({
     container: {
-        paddingVertical: 40,
         paddingHorizontal: 20,
         alignContent: "center",
-        justifyContent: "center"
-
+        justifyContent: "center",
     },
     header: {
         flexDirection: "row",
         justifyContent: "space-between",
-        paddingVertical: 20
+        paddingVertical: 20,
+        position: "relative",
+
     },
     title: {
         fontSize: theme.fonts.sizes.lg,
@@ -26,5 +26,6 @@ export const styles = StyleSheet.create({
     },
     inputContainer: {
         flexDirection: "row",
+        marginTop: 24
     }
 })

@@ -1,12 +1,23 @@
-import { theme } from "@/styles/theme";
-import { StyleSheet } from "react-native";
+import { StyleSheet } from 'react-native'
+import { theme } from '@/styles/theme'
 
 export const styles = StyleSheet.create({
-    container: {
-        height: 1,
-        backgroundColor: theme.colors.gray[200],
-        width: "130%",
-        marginLeft: -20,
-        marginBottom: 20
-    }
+  base: {
+    height: 1,
+    backgroundColor: theme.colors.gray[200],
+  },
+
+  card: {
+    width: '100%',
+  },
+
+  cardFull: {
+    marginHorizontal: -theme.spacing.md,
+  },
+
+  full: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+  },
 })

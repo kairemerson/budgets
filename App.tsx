@@ -1,8 +1,8 @@
 import { StatusBar } from 'expo-status-bar';
 import { View } from 'react-native';
-import { Home } from './src/app/Home';
 
 import {useFonts, Lato_400Regular, Lato_700Bold} from "@expo-google-fonts/lato"
+import { Routes } from '@/routes';
 
 export default function App() {
   const [fontsLoaded] = useFonts({Lato_400Regular, Lato_700Bold})
@@ -14,7 +14,7 @@ export default function App() {
   return (
     <View style={{flex: 1}}>
       <StatusBar style="auto" />
-      <Home/>
+      <Routes/>
     </View>
   );
 }

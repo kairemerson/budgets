@@ -22,7 +22,7 @@ export const styles = StyleSheet.create({
         borderRadius: 8
     },
     draft: {
-        backgroundColor: theme.colors.gray[300]
+        backgroundColor: theme.colors.gray[200]
 
     },
     approved: {
