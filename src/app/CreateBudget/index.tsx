@@ -22,6 +22,8 @@ import { Service } from '@/types/Service'
 import { ServiceList } from './ServiceList.tsx'
 import { Button } from '@/components/Button'
 import { InvestmentSummary } from './InvestimentSummary'
+import { useBottomSheet } from '@/contexts/BottomSheetContext'
+import { ServiceForm } from '@/components/ServiceForm'
 
 const services: Service[] = [
   {
@@ -42,11 +44,17 @@ const services: Service[] = [
 
 export default function CreateBudget() {
     const navigation = useNavigation()
+    const {open} = useBottomSheet()
 
     const [status, setStatus] = useState<Status>(Status.DRAFT)
 
     function handleStatusChange(newStatus: Status) {
         setStatus(newStatus)
+    }
+
+    function handleSave() {
+        
+        
     }
 
     
@@ -76,7 +84,12 @@ export default function CreateBudget() {
                             data={services}
                             onEditItem={(id) => console.log('Editar serviço', id)}
                         />
-                        <Button label='Adicionar serviço' variant='secondary' icon={PlusIcon}/>
+                        <Button 
+                            label='Adicionar serviço' 
+                            variant='secondary' 
+                            icon={PlusIcon} 
+                            onPress={() => open({title: "Serviço", content: <ServiceForm onSave={handleSave}/>})}
+                        />
                     </CardSection>
 
                     <CardSection title="Investimento" icon={CreditCardIcon}>
