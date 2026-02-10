@@ -43,7 +43,7 @@ export function InvestmentSummaryDetails({budget}: Props) {
       <View style={styles.content}>
         <View style={styles.row}>
           <Text style={styles.label}>Subtotal</Text>
-          <Text style={styles.value}>{formatCurrency(subtotal)}</Text>
+          <Text style={styles.value}>{formatCurrency(subtotal / 100)}</Text>
         </View>
 
         <View style={styles.row}>
@@ -61,7 +61,7 @@ export function InvestmentSummaryDetails({budget}: Props) {
 
           <Text style={styles.discountValue}>
             {discountValue
-              ? `- ${formatCurrency(discountValue)}`
+              ? `- ${formatCurrency(discountValue / 100)}`
               : '-'}
           </Text>
         </View>
@@ -70,7 +70,7 @@ export function InvestmentSummaryDetails({budget}: Props) {
 
         <View style={styles.row}>
           <Text style={styles.totalLabel}>Investimento total</Text>
-          <Text style={styles.totalValue}>{formatCurrency(total)}</Text>
+          <Text style={styles.totalValue}>{formatCurrency(total / 100)}</Text>
         </View>
       </View>
     </View>

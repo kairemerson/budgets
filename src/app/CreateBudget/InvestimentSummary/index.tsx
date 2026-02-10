@@ -37,7 +37,7 @@ export function InvestmentSummary({services, discountPct, onChangeDiscount}: Pro
         <Text style={styles.label}>Subtotal</Text>
         <View style={styles.inline}>
           <Text style={styles.muted}>{services.length} itens</Text>
-          <Text style={styles.value}>{formatCurrency(subtotal)}</Text>
+          <Text style={styles.value}>{formatCurrency(subtotal / 100)}</Text>
         </View>
       </View>
 
@@ -48,13 +48,13 @@ export function InvestmentSummary({services, discountPct, onChangeDiscount}: Pro
             value={discountPct}
             onChange={onChangeDiscount}
           />
-          <Text style={styles.discountValue}>- {formatCurrency(discountValue)}</Text>
+          <Text style={styles.discountValue}>- {formatCurrency(discountValue / 100)}</Text>
         </View>
       </View>
 
       <View style={styles.footer}>
         <Text style={styles.totalLabel}>Valor total</Text>
-        <Text style={styles.totalValue}>{formatCurrency(total)}</Text>
+        <Text style={styles.totalValue}>{formatCurrency(total / 100)}</Text>
       </View>
     </>
   )

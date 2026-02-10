@@ -23,7 +23,7 @@ export function ServiceItem({ id, description, price, quantity, title, onEdit }:
 
       <View style={styles.right}>
         <Text style={styles.price}>
-          {formatCurrency(price)}
+          {formatCurrency(price / 100)}
         </Text>
         <Text style={styles.quantity}>Qt: {quantity}</Text>
       </View>

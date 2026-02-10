@@ -1,4 +1,4 @@
-import { Text, View } from "react-native"
+import { KeyboardAvoidingView, Platform, Text, View } from "react-native"
 import { useEffect, useState } from "react"
 import { Status } from "@/types/Status"
 import { StatusCheckbox } from "@/components/StatusCheckBox"
@@ -94,5 +94,6 @@ export function Filters({ value, onApply }: Props) {
             />
         </View>
     </View>
+
   )
 }

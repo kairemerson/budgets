@@ -33,7 +33,6 @@ async function get(): Promise<BudgetsStorage[]> {
 }
 
 async function save(budget: BudgetsStorage): Promise<BudgetsStorage> {
-  console.log("SAVE: ", budget)
   
   try {
     const storage = await get()

@@ -58,13 +58,14 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: 28,
-    marginBottom: 34
+    marginBottom: 34,
+    gap: 12
   },
 
   deleteButton: {
-    width: 44,
-    height: 44,
-    borderRadius: theme.radius.lg,
+    width: 48,
+    height: 48,
+    borderRadius: theme.radius.pill,
     backgroundColor: theme.colors.error.light,
     alignItems: 'center',
     justifyContent: 'center',

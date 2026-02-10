@@ -1,4 +1,4 @@
-import { Alert, FlatList, ScrollView, Text, View } from 'react-native'
+import { Alert, FlatList, ScrollView, Share, Text, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native'
 import { styles } from './styles'
@@ -20,9 +20,12 @@ import TrashIcon from "@/assets/icons/trash-2.svg"
 import ShareIcon from "@/assets/icons/share.svg"
 import { Separator } from '@/components/Separator'
 import { StackRoutesList } from '@/routes/StackRoutes'
-import { BudgetsStorage, budgetStorage } from '@/storage/budgetsStorage'
+import { budgetStorage } from '@/storage/budgetsStorage'
 import { Budget } from '@/types/Budget'
 import { Loading } from '@/components/Loading'
+import { calcBudgetTotal } from '@/utils/calcBudgetTotal'
+import { calcServicesTotal } from '@/utils/calcServicesTotal'
+import { formatCurrency } from '@/utils/formattCurrency'
 
 type DetailsParams = RouteProp<StackRoutesList, "details">
 
@@ -72,7 +75,6 @@ export default function Details() {
     }
 
     async function handleDuplicate() {
-        console.log("chamou handleDuplicate: ", budget);
 
         if(!budget) return
 
@@ -94,6 +96,43 @@ export default function Details() {
         Alert.alert("Sucesso", "Orçamento duplicado com sucesso!")
         navigation.goBack()
     }
+
+    async function handleShare() {
+        if (!budget) return
+
+        const servicesText = budget.services
+            .map(
+            (service) =>
+                `• ${service.title} (x${service.quantity}) - ${formatCurrency(service.price / 100)}`
+            )
+            .join("\n")
+
+const message = `
+📄  Orçamento #${budget.id}
+
+Cliente: ${budget.client}
+Status: ${budget.status}
+
+Serviços:
+${servicesText}
+
+Subtotal: ${formatCurrency(calcServicesTotal(budget.services) / 100)}
+
+Desconto: ${budget.discountPct}%
+
+Total: ${formatCurrency(calcBudgetTotal(budget) / 100)}
+`
+
+            try {
+                await Share.share({
+                    title: "Orçamento",
+                    message,
+                })
+            } catch (error) {
+                Alert.alert("Erro", "Não foi possível compartilhar o orçamento")
+            }
+    }
+
 
     
     useEffect(() => {
@@ -136,7 +175,7 @@ export default function Details() {
                         <Button icon={CopyIcon} width={48} variant='secondary' onPress={handleDuplicate}/>
                         <Button icon={EditIcon} width={48} variant='secondary' onPress={() => navigation.navigate("budgetForm", {id})}/>
                     </View>
-                    <Button label='Compartilhar' icon={ShareIcon}/>
+                    <Button label='Compartilhar' icon={ShareIcon} onPress={handleShare}/>
                 </View>
             </View>
         </ScrollView>

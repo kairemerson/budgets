@@ -47,7 +47,7 @@ export default function CreateBudget() {
     const route = useRoute()
     const {id} = route.params as RouteParams ?? {}
 
-    const {open} = useBottomSheet()
+    const {open, close} = useBottomSheet()
 
     const {control, handleSubmit, setValue, getValues, formState: {errors, isSubmitting}} = useForm<BudgetFormData>({
         resolver: zodResolver(budgetSchema),
@@ -99,21 +99,16 @@ export default function CreateBudget() {
 
     // ✅ CORREÇÃO: Extrair a função onSave para fora do JSX
     const handleSaveService = useCallback((service: Service) => {
-        console.log("🎯 handleSaveService chamado com:", service);
         
         const currentServices = getValues("services")
-        console.log("📋 Serviços atuais:", currentServices);
         
         const updatedServices = [...currentServices, service]
-        console.log("📋 Serviços atualizados:", updatedServices);
         
         setValue("services", updatedServices, {
             shouldDirty: true,
             shouldValidate: true,
         })
         
-        console.log("✅ setValue executado");
-        console.log("📊 Serviços no form agora:", getValues("services"));
         
     }, [getValues, setValue])
 
@@ -128,6 +123,45 @@ export default function CreateBudget() {
             ),
         })
     }
+
+    const handleEditService = useCallback((service: Service) => {
+        const currentServices = getValues("services")
+
+        const updatedServices = currentServices.map((item) =>
+            item.id === service.id ? service : item
+        )
+
+        setValue("services", updatedServices, {
+            shouldDirty: true,
+            shouldValidate: true,
+        })
+    }, [getValues, setValue])
+
+    const handleDeleteService = useCallback((id: string) => {
+        Alert.alert(
+            "Remover serviço",
+            "Deseja remover este serviço?",
+            [
+            { text: "Cancelar", style: "cancel" },
+            {
+                text: "Remover",
+                style: "destructive",
+                onPress: () => {
+                    const currentServices = getValues("services")
+                    const updatedServices = currentServices.filter(
+                        service => service.id !== id
+                    )
+
+                    setValue("services", updatedServices, {
+                        shouldDirty: true,
+                        shouldValidate: true,
+                    })
+                    close()
+                },
+            },
+            ]
+        )
+    }, [getValues, setValue])
 
     useEffect(() => {
         if(!id) return
@@ -209,7 +243,21 @@ export default function CreateBudget() {
                     <CardSection title='Serviços inclusos' icon={NoteIcon}>
                         <ServiceList
                             data={services ?? []}
-                            onEditItem={(id) => console.log('Editar serviço', id)}
+                            onEditItem={(id) => {
+                                const serviceToEdit = services?.find(s => s.id === id)
+                                if (!serviceToEdit) return
+
+                                open({
+                                    title: "Editar serviço",
+                                    content: (
+                                        <ServiceForm
+                                            initialData={serviceToEdit}
+                                            onSave={handleEditService}
+                                            onDelete={() => handleDeleteService(id)}
+                                        />
+                                    ),
+                                })
+                            }}
                         />
                         <Button
                             label="Adicionar serviço"

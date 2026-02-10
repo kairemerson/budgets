@@ -5,6 +5,7 @@ import { Status } from '@/types/Status'
 import {TAgStatus} from '@/components/TagStatus'
 import { Budget } from '@/types/Budget'
 import { formatCurrency } from '@/utils/formattCurrency'
+import { calcBudgetTotal } from '@/utils/calcBudgetTotal'
 
 type BudgetCard = {
   budget: Budget
@@ -14,9 +15,7 @@ export default function BudgetCard({budget}: BudgetCard) {
 
   const {title, client, status, services} = budget
 
-  const totalPrice = services.reduce((total, service) => {
-    return total + service.price * service.quantity
-  }, 0)
+  const totalPrice = calcBudgetTotal(budget)
 
   return (
     <View style={styles.container}>
@@ -26,7 +25,7 @@ export default function BudgetCard({budget}: BudgetCard) {
       </View>
       <View style={styles.priceContainer}>
         <TAgStatus status={status}/>
-        <Text style={styles.price}>{formatCurrency(totalPrice)}</Text>
+        <Text style={styles.price}>{formatCurrency(totalPrice / 100)}</Text>
       </View>
     </View>
   )

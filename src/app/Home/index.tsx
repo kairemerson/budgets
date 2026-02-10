@@ -12,14 +12,14 @@ import BudgetCard from './BudgetCard'
 
 import PlusIcon from "@/assets/icons/plus.svg"
 import FilterIcon from "@/assets/icons/filter.svg"
-import Filter2Icon from "@/assets/icons/filter2.svg"
 
 import {budgetStorage, BudgetsStorage} from "@/storage/budgetsStorage"
 
 import { useBottomSheet } from '@/contexts/BottomSheetContext'
 import { Filters } from './Filters'
 import { calcBudgetTotal } from '@/utils/calcBudgetTotal'
-import { theme } from '@/styles/theme'
+import { useDebounce } from '@/hooks/useDebounce'
+import { Loading } from '@/components/Loading'
  
 type OrderBy = "recent" | "oldest" | "higher" | "lower"
 
@@ -29,12 +29,18 @@ type FiltersState = {
 }
 
 export function Home() {
+
   const navigation = useNavigation()
 
+  const [loading, setLoading] = useState(false)
+
   const [budgets, setBudgets] = useState<BudgetsStorage[]>([])
-  console.log("HOME budgets: ", budgets);
 
   const {open, close} = useBottomSheet()
+
+  const [inputText, setInputText] = useState("")
+  const debouncedSearch = useDebounce(inputText, 400)
+  const searchText = debouncedSearch.trim().toLowerCase()
 
   const [filters, setFilters] = useState<FiltersState>({
   status: [],
@@ -44,6 +50,7 @@ export function Home() {
   
   async function fetchBudgets() {
     try {
+      setLoading(true)
       const response = await budgetStorage.get()
       
       setBudgets(response)
@@ -52,7 +59,10 @@ export function Home() {
       console.log(error)
       Alert.alert("Erro", "Não foi possível buscar os orçamentos!")
       
+    }finally{
+      setLoading(false)
     }
+    
   }
 
   function handleOpenFilters() {
@@ -60,7 +70,9 @@ export function Home() {
       title: "Filtrar e ordenar",
       content: (
         <Filters value={filters} onApply={(newFilters) => {
+          setLoading(true)
           setFilters(newFilters)
+          setLoading(false)
           close()
         }}/>
       )
@@ -68,6 +80,16 @@ export function Home() {
   }
 
   const filteredBudgets = budgets
+  .filter((budget)=> {
+    if(!searchText) return true
+
+    const title = budget.title.toLowerCase()
+    const client = budget.client.toLowerCase()
+
+    return (
+      title.includes(searchText) || client.includes(searchText)
+    )
+  })
   .filter((budget) => {
     if (filters.status.length === 0) return true
     return filters.status.includes(budget.status)
@@ -94,6 +116,7 @@ export function Home() {
     }
   })
 
+  
 
   useFocusEffect(
     useCallback(() => {
@@ -113,26 +136,30 @@ export function Home() {
           <Separator variant='full' style={{top: 140}}/>
 
         <View style={styles.inputContainer}>
-          <Filter2Icon fill={theme.colors.error.dark} color={theme.colors.error.dark}/>
-          <Input placeholder='Título ou cliente' showSearchIcon={true}/>
+          <Input placeholder='Título ou cliente' showSearchIcon={true} value={inputText} onChangeText={setInputText}/>
           <Button variant={filters.status.length > 0 || filters.orderBy !== "recent" ? "primary" : "secondary"} icon={FilterIcon} onPress={handleOpenFilters}/>
         </View>
         
+        {loading ? (
+          <View style={{flex: 1, marginTop: 60}}> 
+            <Loading fullWidth/>
+          </View>
+        ) : (
+          <FlatList
+            data={filteredBudgets}
+            style={{marginTop: 16}}
+            contentContainerStyle={{gap: 8}}
+            keyExtractor={(item) => item.id}
+            renderItem={({item}) => (
+              <TouchableOpacity activeOpacity={0.7} onPress={() => navigation.navigate("details", {id: item.id})}>
+                <BudgetCard budget={item}/>
+              </TouchableOpacity>
+  
+            )}
+            ListEmptyComponent={<Text style={styles.emptyText}>Nenhum orçamento cadastrado, adicione um orçamento</Text>}
+          />
 
-
-        <FlatList
-          data={filteredBudgets}
-          style={{marginTop: 16}}
-          contentContainerStyle={{gap: 8}}
-          keyExtractor={(item) => item.id}
-          renderItem={({item}) => (
-            <TouchableOpacity activeOpacity={0.7} onPress={() => navigation.navigate("details", {id: item.id})}>
-              <BudgetCard budget={item}/>
-            </TouchableOpacity>
-
-          )}
-          ListEmptyComponent={<Text style={styles.emptyText}>Nenhum orçamento cadastrado, adicione um orçamento</Text>}
-        />
+        )}
         
     </SafeAreaView>
   )
