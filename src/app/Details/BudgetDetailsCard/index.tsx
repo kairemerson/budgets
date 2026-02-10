@@ -3,6 +3,7 @@ import { styles } from './styles'
 import { Budget } from '@/types/Budget'
 import ShopIcon from '@/assets/icons/shop.svg'
 import { theme } from '@/styles/theme'
+import { formatDate } from '@/utils/formatDate'
 
 type Props = {
   budget: Budget
@@ -47,6 +48,3 @@ export function BudgetDetailsCard({ budget }: Props) {
   )
 }
 
-function formatDate(date: string) {
-  return new Date(date).toLocaleDateString('pt-BR')
-}

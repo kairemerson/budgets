@@ -15,13 +15,13 @@ export const styles = StyleSheet.create({
   },
   titleContainer: {
     flexDirection: "row",
-    gap: 20
+    gap: 8
   },
   title: {
     textAlign: 'center',
     fontSize: theme.fonts.sizes.md,
     fontFamily: theme.fonts.family.bold,
-    color: theme.colors.gray[800],
+    color: theme.colors.gray[700],
   },
 
   /* 🔹 badge */

@@ -14,7 +14,11 @@ export function ServiceList({ data, onEditItem }: Props) {
       keyExtractor={(item) => item.id}
       renderItem={({ item }) => (
         <ServiceItem
-          service={item}
+          id={item.id}
+          description={item.description}
+          price={item.price}
+          quantity={item.quantity}
+          title={item.title}
           onEdit={() => onEditItem?.(item.id)}
         />
       )}

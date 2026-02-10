@@ -15,7 +15,8 @@ export const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: theme.colors.gray[300],
     color: theme.colors.gray[700],
-    height: 48
+    height: 48,
+    flex: 1
   },
 
   textarea: {
@@ -56,7 +57,8 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 40,
+    marginTop: 28,
+    marginBottom: 34
   },
 
   deleteButton: {

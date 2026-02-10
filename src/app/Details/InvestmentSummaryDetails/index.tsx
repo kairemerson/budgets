@@ -2,20 +2,36 @@ import { View, Text } from 'react-native'
 import { styles } from './styles'
 import CreditIcon from '@/assets/icons/credit-card.svg'
 import { theme } from '@/styles/theme'
+import { formatCurrency } from '@/utils/formattCurrency'
+import { Budget } from '@/types/Budget'
+import { useMemo } from 'react'
 
 type Props = {
-  subtotal: number
-  discountPct?: number
-  discountValue?: number
-  total: number
+  budget: Budget
 }
 
-export function InvestmentSummaryDetails({
-  subtotal,
-  discountPct,
-  discountValue,
-  total,
-}: Props) {
+export function InvestmentSummaryDetails({budget}: Props) {
+
+  const discountPct = budget.discountPct ?? 0
+
+  const { subtotal, discountValue, total } = useMemo(() => {
+
+  const subtotal = budget.services.reduce(
+    (total, service) => total + service.price * service.quantity,
+    0
+  )
+
+  const discountPct = budget.discountPct ?? 0
+  const discountValue = subtotal * (discountPct / 100)
+  const total = subtotal - discountValue
+
+  return {
+    subtotal,
+    discountValue,
+    total
+  }
+}, [budget.services, budget.discountPct])
+
   return (
     <View style={styles.container}>
       {/* Left icon */}
@@ -34,11 +50,13 @@ export function InvestmentSummaryDetails({
           <View style={styles.inline}>
             <Text style={styles.label}>Desconto</Text>
 
-            {discountPct && (
+            {discountPct > 0 && (
               <View style={styles.badge}>
                 <Text style={styles.badgeText}>{discountPct}% off</Text>
               </View>
+
             )}
+            
           </View>
 
           <Text style={styles.discountValue}>
@@ -59,9 +77,3 @@ export function InvestmentSummaryDetails({
   )
 }
 
-function formatCurrency(value: number) {
-  return value.toLocaleString('pt-BR', {
-    style: 'currency',
-    currency: 'BRL',
-  })
-}

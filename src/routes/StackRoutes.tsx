@@ -6,8 +6,12 @@ import {createNativeStackNavigator} from "@react-navigation/native-stack"
 
 export type StackRoutesList = {
     home: undefined
-    create: undefined
-    details: undefined
+    budgetForm?: {
+        id?: string
+    }
+    details: {
+        id: string
+    }
 }
 
 
@@ -23,7 +27,7 @@ export function StackRoutes() {
                 }
             }}>
             <Stack.Screen  name="home" component={Home}/>
-            <Stack.Screen  name="create" component={CreateBudget}/>
+            <Stack.Screen  name="budgetForm" component={CreateBudget}/>
             <Stack.Screen  name="details" component={Details}/>
         </Stack.Navigator>
     )

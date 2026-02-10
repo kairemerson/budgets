@@ -26,4 +26,9 @@ export const styles = StyleSheet.create({
         height: "100%",
 
     },
+    errorMessage: {
+        fontSize: theme.fonts.sizes.xs,
+        color: theme.colors.error.main,
+        marginLeft: 16
+    }
 })

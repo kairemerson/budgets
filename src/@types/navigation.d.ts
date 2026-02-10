@@ -1,7 +1,11 @@
 export type RootStackParamList = {
     home: undefined
-    create: undefined
-    details: undefined
+    budgetForm?: {
+        id?: string
+    }
+    details: {
+        id: string
+    }
 }
 
 declare global {

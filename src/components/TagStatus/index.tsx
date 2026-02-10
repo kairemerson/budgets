@@ -35,8 +35,8 @@ export function TAgStatus({status}: Props) {
         {status === Status.APPROVED ? "Aprovado" 
         : status === Status.DRAFT ? "Rascunho"
         : status === Status.REJECTED ? "Recusado"
-        : status === Status.SENT ? "Enviado"
-        : "teste"}
+        : "Enviado"
+        }
       </Text>
     </View>
   )

@@ -1,5 +1,6 @@
-import { FlatList, ScrollView, View } from 'react-native'
-import React from 'react'
+import { Alert, FlatList, ScrollView, Text, View } from 'react-native'
+import React, { useEffect, useState } from 'react'
+import { RouteProp, useNavigation, useRoute } from '@react-navigation/native'
 import { styles } from './styles'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Status } from '@/types/Status'
@@ -18,61 +19,122 @@ import EditIcon from "@/assets/icons/edit-pen.svg"
 import TrashIcon from "@/assets/icons/trash-2.svg"
 import ShareIcon from "@/assets/icons/share.svg"
 import { Separator } from '@/components/Separator'
+import { StackRoutesList } from '@/routes/StackRoutes'
+import { BudgetsStorage, budgetStorage } from '@/storage/budgetsStorage'
+import { Budget } from '@/types/Budget'
+import { Loading } from '@/components/Loading'
 
-const services: Service[] = [
-  {
-    id: '1',
-    title: 'Design de interfaces',
-    description: 'Criação de wireframes e protótipos',
-    price: 3847.5,
-    quantity: 1,
-  },
-  {
-    id: '2',
-    title: 'Implantação e suporte',
-    description: 'Publicação nas lojas de aplicativos',
-    price: 3847.5,
-    quantity: 1,
-  },
-]
+type DetailsParams = RouteProp<StackRoutesList, "details">
 
 export default function Details() {
+
+    const [budget, setBudget] = useState<Budget>()
+
+    const navigation = useNavigation()
+    const {params} = useRoute<DetailsParams>() 
+    const {id} = params    
+
+    async function fetchDetails() {
+        const budgetData = await budgetStorage.getById(id)
+
+        if(!budgetData) {
+            Alert.alert('Erro', 'Orçamento não encontrado')
+            return
+        }
+
+        setBudget(budgetData)
+
+    }  
+
+    function remove() {
+        Alert.alert("Excluir Cotação", "Tem certeza que deseja excluir esta cotação?", [
+            {
+                text: "Cancelar",
+                style: "cancel"
+            },
+            {
+                text: "Excluir",
+                onPress: () => handleRemove(),
+                
+            }
+        ], {cancelable: true})
+    }
+    
+    async function handleRemove() {
+        const removed = await budgetStorage.remove(id)
+
+        if(!removed) {
+            Alert.alert("Erro", "Não foi possível remover orçamento!")
+        }
+
+        Alert.alert("Sucesso", "Orçamento removido com sucesso!")
+        navigation.goBack()
+    }
+
+    async function handleDuplicate() {
+        console.log("chamou handleDuplicate: ", budget);
+
+        if(!budget) return
+
+        const {id, createdAt, updatedAt, ...rest} = budget
+
+        const year = new Date().getFullYear()
+        const newId = `${Math.floor(Math.random() * 10000)}-${year}`
+
+        const duplicatedBudget = {
+            ...rest,
+            id: newId,
+            status: Status.DRAFT,
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString()
+        }
+
+
+        await budgetStorage.save(duplicatedBudget)
+        Alert.alert("Sucesso", "Orçamento duplicado com sucesso!")
+        navigation.goBack()
+    }
+
+    
+    useEffect(() => {
+        fetchDetails()
+    }, [id])
+
+    if (!budget) {
+        return (
+            <Loading fullWidth/>
+        )
+    }    
+
   return (
     <SafeAreaView >
         <ScrollView>
             <View style={{paddingHorizontal: 20, gap: 20}}>
                 <Separator variant="full" style={{top: 52}}/>
-                <Header title='Orçamento#123' status={Status.SENT}/>
+                <Header title={`Orçamento#${id}`} status={budget.status}/>
                 <BudgetDetailsCard
-                    budget={{
-                        id: '1',
-                        title: 'Desenvolvimento de aplicativo de loja online',
-                        client: 'Soluções Tecnológicas Beta',
-                        services: [],
-                        status: Status.SENT,
-                        createdAt: '2024-08-22',
-                        updatedAt: '2024-08-25',
-                    }}
+                    budget={budget}
                 />
 
                 <CardSection title='Serviços inclusos' icon={NoteIcon}>
                     <FlatList
-                        data={services}
+                        data={budget?.services ?? []}
                         keyExtractor={(item) => item.id}
                         renderItem={({item}) => (
-                            <ServiceItem service={item}/>
+                            <ServiceItem {...item}/>
                         )}
                         scrollEnabled={false}
                     />
                 </CardSection>
                 
-                <InvestmentSummaryDetails subtotal={4050} discountPct={5} discountValue={200} total={3847.5}/>
+                <InvestmentSummaryDetails budget={budget}/>
+
                 <Separator variant='full' style={{bottom: 70}}/>
                 <View style={styles.actionsContainer}>
                     <View style={styles.buttonsContainer}>
-                        <Button icon={TrashIcon} variant='secondary'/>
-                        <Button icon={CopyIcon} variant='secondary'/>
-                        <Button icon={EditIcon} variant='secondary'/>
+                        <Button icon={TrashIcon} width={48} variant='secondary' onPress={remove}/>
+                        <Button icon={CopyIcon} width={48} variant='secondary' onPress={handleDuplicate}/>
+                        <Button icon={EditIcon} width={48} variant='secondary' onPress={() => navigation.navigate("budgetForm", {id})}/>
                     </View>
                     <Button label='Compartilhar' icon={ShareIcon}/>
                 </View>

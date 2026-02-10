@@ -27,5 +27,14 @@ export const styles = StyleSheet.create({
     inputContainer: {
         flexDirection: "row",
         marginTop: 24
+    },
+    emptyText: {
+        color: theme.colors.gray[500],
+        fontFamily: theme.fonts.family.regular,
+        fontSize: theme.fonts.sizes.sm,
+        textAlign: "center",
+        marginTop: 30,
+        maxWidth: "60%",
+        marginHorizontal: "auto"
     }
 })

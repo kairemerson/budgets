@@ -1,4 +1,4 @@
-import { View, Text, Pressable, Animated } from 'react-native'
+import { View, Text, Pressable, Animated, ScrollView } from 'react-native'
 import { ReactNode, useEffect, useRef } from 'react'
 import { styles } from './styles'
 import CloseIcon from '@/assets/icons/close.svg'
@@ -43,8 +43,13 @@ export function BottomSheet({ title, children, onClose }: Props) {
         </View>
 
         {/* Content */}
-        <View style={styles.content}>{children}</View>
-        <Separator variant='full' style={{bottom: 78}}/>
+        <ScrollView
+          style={styles.content}
+          keyboardShouldPersistTaps="handled"
+        >
+          {children}
+        </ScrollView>
+        <Separator variant='full' style={{bottom: 98}}/>
       </Animated.View>
     </View>
   )
